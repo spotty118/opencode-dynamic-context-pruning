@@ -528,7 +528,7 @@ export class Janitor {
     /**
      * Helper function to calculate token savings from tool outputs
      */
-    private calculateTokensSaved(prunedIds: string[], toolOutputs: Map<string, string>): number {
+    private async calculateTokensSaved(prunedIds: string[], toolOutputs: Map<string, string>): Promise<number> {
         const outputsToTokenize: string[] = []
         
         for (const prunedId of prunedIds) {
@@ -539,8 +539,8 @@ export class Janitor {
         }
         
         if (outputsToTokenize.length > 0) {
-            // Use batch tokenization for efficiency
-            const tokenCounts = estimateTokensBatch(outputsToTokenize, this.logger)
+            // Use batch tokenization for efficiency (lazy loads gpt-tokenizer)
+            const tokenCounts = await estimateTokensBatch(outputsToTokenize, this.logger)
             return tokenCounts.reduce((sum, count) => sum + count, 0)
         }
         
@@ -593,7 +593,7 @@ export class Janitor {
         if (deduplicatedIds.length === 0) return
 
         // Calculate token savings
-        const tokensSaved = this.calculateTokensSaved(deduplicatedIds, toolOutputs)
+        const tokensSaved = await this.calculateTokensSaved(deduplicatedIds, toolOutputs)
         const tokensFormatted = formatTokenCount(tokensSaved)
 
         const toolText = deduplicatedIds.length === 1 ? 'tool' : 'tools'
@@ -647,7 +647,7 @@ export class Janitor {
 
         // Calculate token savings
         const allPrunedIds = [...deduplicatedIds, ...llmPrunedIds]
-        const tokensSaved = this.calculateTokensSaved(allPrunedIds, toolOutputs)
+        const tokensSaved = await this.calculateTokensSaved(allPrunedIds, toolOutputs)
         const tokensFormatted = formatTokenCount(tokensSaved)
 
         let message = `🧹 DCP: Saved ~${tokensFormatted} tokens (${totalPruned} tool${totalPruned > 1 ? 's' : ''} pruned)\n`

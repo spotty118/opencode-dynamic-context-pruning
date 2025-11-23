@@ -4,9 +4,12 @@
  * Uses gpt-tokenizer to provide token counts for text content.
  * Works with any LLM provider - provides accurate counts for OpenAI models
  * and reasonable approximations for other providers.
+ * 
+ * NOTE: gpt-tokenizer is lazily imported to avoid loading the 53MB package
+ * during plugin initialization. The package is only loaded when tokenization
+ * is actually needed.
  */
 
-import { encode } from 'gpt-tokenizer'
 import type { Logger } from './logger'
 
 /**
@@ -16,11 +19,14 @@ import type { Logger } from './logger'
  * @param logger - Optional logger instance
  * @returns Array of token counts
  */
-export function estimateTokensBatch(
+export async function estimateTokensBatch(
     texts: string[],
     logger?: Logger
-): number[] {
+): Promise<number[]> {
     try {
+        // Lazy import - only load the 53MB gpt-tokenizer package when actually needed
+        const { encode } = await import('gpt-tokenizer')
+        
         const results = texts.map(text => {
             const tokens = encode(text)
             return tokens.length
