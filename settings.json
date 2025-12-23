@@ -14,6 +14,18 @@
           }
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${pluginDir}/hooks/pre-compact.sh",
+            "description": "Analyze context before compaction and provide intelligent guidance"
+          }
+        ]
+      }
     ]
   },
 
@@ -23,7 +35,8 @@
       "Task",
       "Read",
       "Grep",
-      "Glob"
+      "Glob",
+      "Bash"
     ]
   },
 
@@ -34,7 +47,12 @@
         "deduplication",
         "supersedeWrites",
         "semantic"
-      ]
+      ],
+      "preCompact": {
+        "enabled": true,
+        "useAgent": true,
+        "showNotifications": true
+      }
     }
   }
 }

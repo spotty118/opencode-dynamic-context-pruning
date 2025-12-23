@@ -38,6 +38,12 @@ if [ ! -f "$CONFIG_FILE" ]; then
       "enabled": true
     }
   },
+  "preCompact": {
+    "enabled": true,
+    "showPreCompactAnalysis": true,
+    "autoAnalyze": true,
+    "useAgent": true
+  },
   "notification": {
     "showOnSessionStart": true,
     "showAnalysisResults": true

@@ -1,7 +1,7 @@
 {
   "name": "dynamic-context-pruning",
-  "version": "2.0.0",
-  "description": "Claude Code plugin that optimizes token usage by pruning obsolete tool outputs from conversation context using AI agents",
+  "version": "2.1.0",
+  "description": "Claude Code plugin that optimizes token usage by pruning obsolete tool outputs from conversation context using AI agents. Features PreCompact hook for intelligent automatic compaction.",
   "author": "tarquinen",
   "license": "MIT",
   "repository": "https://github.com/Tarquinen/opencode-dynamic-context-pruning",
@@ -10,6 +10,8 @@
     "pruning",
     "optimization",
     "tokens",
-    "agent"
+    "agent",
+    "precompact",
+    "compaction"
   ]
 }
