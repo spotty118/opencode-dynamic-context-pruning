@@ -160,6 +160,104 @@ if [ "$AUTO_ANALYZE" = "true" ]; then
     fi
 fi
 
+# ============================================================================
+# Memory Capture: Store context summaries for later retrieval
+# ============================================================================
+
+# Create memory directory structure
+MEMORY_DIR="$HOME/.config/claude/dcp/memory/sessions/$SESSION_ID"
+SUMMARY_DIR="$MEMORY_DIR/summaries"
+mkdir -p "$SUMMARY_DIR"
+
+# Generate unique filename for this compaction event
+TIMESTAMP=$(date +%s)
+SUMMARY_FILE="$SUMMARY_DIR/compact_${TIMESTAMP}.json"
+
+# Capture metadata about this compaction event
+# This will be enriched with actual summary content after agent analysis
+cat > "$SUMMARY_FILE" << MEMORY_EOF
+{
+  "timestamp": $(date +%s),
+  "timestamp_iso": "$(date -Iseconds)",
+  "trigger": "$TRIGGER",
+  "session_id": "$SESSION_ID",
+  "transcript_path": "$TRANSCRIPT_PATH",
+  "metrics": {
+    "tool_calls": $TOOL_COUNT,
+    "messages": $MESSAGE_COUNT
+  },
+  "analysis_request": "$ANALYSIS_REQUEST",
+  "status": "pending_analysis",
+  "summary": null
+}
+MEMORY_EOF
+
+if [ "$SHOW_NOTIFICATIONS" = "true" ]; then
+    echo -e "\n${GREEN}[DCP Memory]${NC} Context metadata captured: $SUMMARY_FILE"
+fi
+
+# Create capture file with transcript segment being compacted
+# This helps the agent understand what content is being processed
+CAPTURE_FILE="$MEMORY_DIR/captures/compact_${TIMESTAMP}.txt"
+mkdir -p "$MEMORY_DIR/captures"
+
+cat > "$CAPTURE_FILE" << CAPTURE_EOF
+# Context Compaction Capture
+# Timestamp: $(date -Iseconds)
+# Trigger: $TRIGGER
+# Session: $SESSION_ID
+
+## Transcript Information
+Path: $TRANSCRIPT_PATH
+Tool Calls: $TOOL_COUNT
+Messages: $MESSAGE_COUNT
+
+## Analysis Request
+The full analysis request has been saved to:
+$ANALYSIS_REQUEST
+
+## Next Steps
+An agent should be spawned to:
+1. Read the transcript at: $TRANSCRIPT_PATH
+2. Generate a structured summary of the conversation
+3. Update the summary file with findings: $SUMMARY_FILE
+4. Store the summary as JSON with:
+   - Preserved context (what to keep)
+   - Removable content (what can be pruned)
+   - Token savings estimate
+   - Strategic recommendations
+
+## Agent Instructions for Summary Storage
+
+After completing the analysis, the agent should update $SUMMARY_FILE
+by replacing the "summary" field with a structured JSON object containing:
+
+{
+  "preserve": {
+    "critical_context": ["list of critical elements to preserve"],
+    "recent_decisions": ["key decisions made in conversation"],
+    "active_work": ["current tasks and their status"]
+  },
+  "remove": {
+    "duplicates": ["duplicate tool calls with positions"],
+    "superseded": ["superseded writes with positions"],
+    "obsolete": ["obsolete exploration with positions"]
+  },
+  "token_analysis": {
+    "removable_tokens": 0,
+    "critical_tokens": 0,
+    "net_savings": 0
+  },
+  "recommendation": "Overall compaction strategy guidance"
+}
+
+CAPTURE_EOF
+
+if [ "$SHOW_NOTIFICATIONS" = "true" ]; then
+    echo -e "${GREEN}[DCP Memory]${NC} Capture file created: $CAPTURE_FILE"
+    echo -e "${BLUE}[DCP Memory]${NC} Agent should update summary after analysis completes"
+fi
+
 # Log the event
 if grep -q '"debug":\s*true' "$CONFIG_FILE" 2>/dev/null; then
     LOG_DIR="$CONFIG_DIR/logs"

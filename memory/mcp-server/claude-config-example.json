@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "context-memory": {
+      "command": "node",
+      "args": [
+        "/home/user/opencode-dynamic-context-pruning/memory/mcp-server/dist/index.js"
+      ],
+      "env": {}
+    }
+  }
+}
