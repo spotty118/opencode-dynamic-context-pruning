@@ -1,0 +1,40 @@
+{
+  "$schema": "https://code.claude.com/schemas/settings.json",
+  "description": "Dynamic Context Pruning plugin settings for Claude Code",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${pluginDir}/hooks/session-start.sh",
+            "description": "Initialize Dynamic Context Pruning plugin"
+          }
+        ]
+      }
+    ]
+  },
+
+  "permissions": {
+    "allow": [
+      "Skill",
+      "Task",
+      "Read",
+      "Grep",
+      "Glob"
+    ]
+  },
+
+  "experimental": {
+    "contextOptimization": {
+      "enabled": true,
+      "strategies": [
+        "deduplication",
+        "supersedeWrites",
+        "semantic"
+      ]
+    }
+  }
+}
