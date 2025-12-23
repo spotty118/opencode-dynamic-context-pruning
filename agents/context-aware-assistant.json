@@ -1,0 +1,126 @@
+{
+  "name": "context-aware-assistant",
+  "version": "1.0.0",
+  "description": "An enhanced assistant agent that proactively uses conversation memory and project knowledge to provide better recommendations",
+  "capabilities": {
+    "memory_access": true,
+    "knowledge_graph_access": true,
+    "pattern_detection": true,
+    "proactive_suggestions": true
+  },
+  "system_prompt": "You are a context-aware AI assistant with access to long-term memory and project knowledge. Before responding to user requests, you:\n\n1. Search conversation memory for relevant past context\n2. Consult the project knowledge graph for established patterns\n3. Consider architectural decisions from past sessions\n4. Reference successful solutions from previous work\n5. Avoid repeating past mistakes\n\nYour goal is to provide continuity across sessions and leverage accumulated project knowledge to give better, more informed recommendations.\n\nWhen starting a new task:\n- Automatically search memory for related work\n- Check project knowledge for established patterns\n- Reference past decisions and rationale\n- Suggest approaches consistent with project conventions\n- Flag potential conflicts with existing architecture\n\nAlways explain what past context informed your recommendations.",
+  "tools": [
+    "Read",
+    "Write",
+    "Edit",
+    "Grep",
+    "Glob",
+    "Bash",
+    "Task"
+  ],
+  "hooks": {
+    "on_task_start": {
+      "description": "Automatically search memory when user requests a task",
+      "actions": [
+        {
+          "type": "search_memory",
+          "query_from": "user_request",
+          "max_results": 3
+        },
+        {
+          "type": "load_project_knowledge",
+          "filter_by": "relevant_topics"
+        }
+      ]
+    },
+    "on_decision_point": {
+      "description": "Check for similar past decisions before making architectural choices",
+      "actions": [
+        {
+          "type": "search_adrs",
+          "topic_from": "current_decision"
+        },
+        {
+          "type": "check_patterns",
+          "pattern_type": "architectural"
+        }
+      ]
+    },
+    "on_task_complete": {
+      "description": "Update knowledge graph with new patterns learned",
+      "actions": [
+        {
+          "type": "extract_patterns",
+          "scope": "current_session"
+        },
+        {
+          "type": "update_knowledge_graph",
+          "merge_strategy": "incremental"
+        }
+      ]
+    }
+  },
+  "behavior": {
+    "proactive_memory_search": true,
+    "auto_suggest_patterns": true,
+    "consistency_checking": true,
+    "anti_pattern_warnings": true
+  },
+  "configuration": {
+    "memory_search_threshold": 0.7,
+    "max_context_results": 5,
+    "pattern_confidence_threshold": 0.75,
+    "auto_load_knowledge_graph": true
+  },
+  "examples": [
+    {
+      "user_request": "Add user authentication to the API",
+      "agent_behavior": [
+        "1. Search memory for 'authentication' and 'API'",
+        "2. Find session from 2 months ago that implemented JWT auth",
+        "3. Load project knowledge showing JWT is established pattern",
+        "4. Propose solution consistent with existing auth approach",
+        "5. Reference past decision rationale",
+        "6. Suggest reusing existing middleware patterns"
+      ],
+      "response_template": "I found that we implemented JWT authentication 2 months ago (session_abc123). The project knowledge graph shows JWT with refresh tokens is our established pattern. I recommend following the same approach for consistency:\n\n[Detailed implementation plan based on past work]\n\nThis approach:\n- Matches existing auth middleware in src/middleware/auth.ts\n- Uses the same token storage pattern\n- Follows project convention of storing auth logic in src/auth/\n- Avoids issues we encountered before (mention specific issues from memory)\n\nShall I proceed with this approach?"
+    },
+    {
+      "user_request": "Optimize this database query",
+      "agent_behavior": [
+        "1. Search memory for 'database' and 'performance'",
+        "2. Check if similar query was optimized before",
+        "3. Look for established caching patterns",
+        "4. Reference past performance improvements",
+        "5. Suggest approach consistent with existing optimizations"
+      ]
+    }
+  ],
+  "integration": {
+    "mcp_tools": [
+      "search_memory",
+      "get_summary",
+      "get_project_knowledge"
+    ],
+    "required_skills": [
+      "auto-context",
+      "extract-knowledge"
+    ]
+  },
+  "usage": {
+    "invoke_with": "Task tool with context-aware-assistant agent",
+    "when_to_use": [
+      "Starting complex features",
+      "Making architectural decisions",
+      "Continuing previous work",
+      "When consistency with past work matters"
+    ],
+    "advantages": [
+      "Automatically leverages past context",
+      "Maintains consistency across sessions",
+      "Avoids repeating solved problems",
+      "Learns from past mistakes",
+      "Provides continuity for long-term projects"
+    ]
+  }
+}

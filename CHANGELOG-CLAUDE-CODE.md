@@ -1,3 +1,92 @@
+# Changelog - Claude Code Edition
+
+All notable changes to the Dynamic Context Pruning plugin for Claude Code will be documented in this file.
+
+## [2.3.0] - 2025-12-23
+
+### Added - Agent-Based Context Window Features
+
+This release adds advanced agent-based features for intelligent context management and semantic retrieval.
+
+#### Vector Embeddings Module
+- **New Module**: `memory/mcp-server/embeddings.ts`
+- Support for multiple embedding providers:
+  - OpenAI API (text-embedding-3-small/large)
+  - Local models (sentence-transformers via Python)
+  - Placeholder for future Anthropic embeddings API
+- Vector similarity functions (cosine, Euclidean, dot product)
+- Batch processing capabilities
+- Auto-detection of best available provider
+- Graceful fallback to text similarity if embeddings unavailable
+
+#### Auto-Context Retrieval Skill
+- **New Skill**: `skills/auto-context/SKILL.md`
+- Proactively searches conversation memory when starting tasks
+- Automatically extracts search queries from user requests
+- Scores relevance and generates structured context reports
+- Provides actionable recommendations based on past work
+- Helps maintain continuity across sessions
+
+#### Knowledge Extraction Agent
+- **New Skill**: `skills/extract-knowledge/SKILL.md`
+- **New Command**: `commands/extract-knowledge.md`
+- Analyzes all conversation summaries to build project knowledge graph
+- Extracts:
+  - Architectural patterns with confidence scores
+  - Architectural Decision Records (ADRs)
+  - Coding conventions and style guides
+  - Common tasks and solution patterns
+  - Anti-patterns to avoid
+- Generates both machine-readable (JSON) and human-readable (Markdown) output
+- Stores knowledge graph in `~/.config/claude/dcp/memory/projects/`
+
+#### Context-Aware Assistant Agent
+- **New Agent**: `agents/context-aware-assistant.json`
+- Enhanced agent that automatically uses memory and knowledge graph
+- Proactively searches memory when tasks start
+- Consults established patterns before making decisions
+- Maintains consistency with past architectural choices
+- References successful solutions from previous sessions
+- Avoids repeating past mistakes
+
+#### Pattern Detection Utility
+- **New Script**: `memory/scripts/pattern-detector.sh`
+- Standalone utility for detecting patterns in summaries
+- Detects:
+  - Architectural patterns (state management, API design, auth, etc.)
+  - Naming conventions (kebab-case, PascalCase, camelCase)
+  - Technology stack (frameworks, libraries, languages)
+- Multiple output formats (JSON, Markdown, text)
+- Configurable thresholds and filtering
+- Can be run from command line or invoked by agents
+
+#### Documentation
+- **New Guide**: `docs/AGENT-BASED-FEATURES.md` - Comprehensive documentation for all new features
+- Usage examples and integration patterns
+- Setup instructions and best practices
+- Troubleshooting guide
+- Performance characteristics
+
+### Changed
+- Enhanced context window system to support agent-based workflows
+- Improved integration between memory, knowledge graph, and active context
+
+### Technical Details
+- All new features built using Task tool and agent system
+- Fully compatible with existing v2.2.0 memory system
+- No breaking changes to existing APIs
+- Graceful degradation when advanced features unavailable
+
+### Future Enhancements (Phase 3)
+- Hybrid search (vector + keyword)
+- Cross-project pattern learning
+- Auto-suggest relevant context during conversations
+- Pattern evolution tracking
+- Conflict detection for code changes
+- Memory consolidation
+
+---
+
 # Changelog - Claude Code Adaptation
 
 ## Version 2.2.0 - Enhanced Context Memory System (2025-12-23)
