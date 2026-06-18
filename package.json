@@ -38,10 +38,10 @@
     "@opencode-ai/plugin": ">=0.13.7"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^1.0.28",
+    "@ai-sdk/openai-compatible": "^2.0.51",
     "@opencode-ai/sdk": "latest",
     "@tarquinen/opencode-auth-provider": "^0.1.7",
-    "ai": "^5.0.106",
+    "ai": "^6.0.208",
     "gpt-tokenizer": "^3.4.0",
     "jsonc-parser": "^3.3.1",
     "zod": "^4.1.13"
